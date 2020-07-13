@@ -51,7 +51,7 @@ export class GameScene extends Phaser.Scene {
     }
         
     create() {    
-        this.physics.world.setBounds(0, 0, window.innerWidth, window.innerHeight, true, true, true, true);
+        this.physics.world.setBounds(0, 0, 1920, 1080, true, true, true, true);
        
         for (let i = 0; i < 8; i++) {
             let d = {skin:'player', key:[]}
@@ -74,7 +74,7 @@ export class GameScene extends Phaser.Scene {
         //this.animArray.push({skin:'waspstunned', key:[0,1,2,3,4,5,6,7]})
         
 
-        this.add.image(window.innerWidth/2, window.innerHeight/2,"bg")
+        this.add.image(1920/2, 1080/2,"bg")
 
         this.anims.create({
             key:'swinging',

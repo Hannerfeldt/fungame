@@ -5,8 +5,8 @@ let config = {
   type:Phaser.Auto,
   width:1920,
   height:1080,
-  width:window.innerWidth,
-  height:window.innerHeight,
+  // width:window.innerWidth,
+  // height:window.innerHeight,
   backgroundColor:0x000000,
   physics:{
       default:'arcade',
@@ -17,6 +17,5 @@ let config = {
   scene: [GameScene]
 }
 
-window.onload = function() {
-  let game = new Phaser.Game(config);
-}
+
+let game = new Phaser.Game(config);
