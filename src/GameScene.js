@@ -4,6 +4,21 @@ import { Snake } from './snake'
 import { Wasp } from './wasp'
 import { Drop } from './drop'
 import { Enemy } from './enemy'
+import swing from './assets/swing.png'
+import blood from './assets/bloodeffect.png'
+import spider from './assets/spider.png'
+import player from './assets/player.png'
+import attack from './assets/attack.png'
+import snake from './assets/snake.png'
+import wasp from './assets/wasp.png'
+import waspstunned from './assets/waspstunned.png'
+import gust from './assets/gust.png'
+
+import bg from './assets/grass_background.png'
+import health from './assets/health_icon.png'
+import xp from './assets/xp_icon.png'
+import armour from './assets/armour_icon.png'
+import speed from './assets/speed_icon.png'
 
 export class GameScene extends Phaser.Scene {   
     constructor() {
@@ -16,22 +31,22 @@ export class GameScene extends Phaser.Scene {
     preload() {
         this.keyboard = this.input.keyboard.addKeys("W, A, S, D, SPACE, SHIFT")
         
-        this.load.spritesheet('swing', './src/assets/swing.png', {frameWidth: 200, frameHeight: 200})
-        this.load.spritesheet('blood', './src/assets/bloodeffect.png', {frameWidth: 200, frameHeight: 200})
-        this.load.spritesheet('spider', './src/assets/spider.png', {frameWidth: 200, frameHeight: 200})
-        this.load.spritesheet('player', './src/assets/player.png', {frameWidth: 200, frameHeight: 200})
-        this.load.spritesheet('jump', './src/assets/jump.png', {frameWidth:200, frameHeight:200})
-        this.load.spritesheet('attack', './src/assets/attack.png', {frameWidth: 200, frameHeight: 200})
-        this.load.spritesheet('snake', './src/assets/snake.png', {frameWidth: 200, frameHeight: 200})
-        this.load.spritesheet('wasp', './src/assets/wasp.png', {frameWidth: 200, frameHeight: 200})
-        this.load.spritesheet('waspstunned', './src/assets/waspstunned.png', {frameWidth: 200, frameHeight: 200})
-        this.load.spritesheet('gust', './src/assets/gust.png', {frameWidth: 200, frameHeight: 200})
+        this.load.spritesheet('swing', swing, {frameWidth: 200, frameHeight: 200})
+        this.load.spritesheet('blood', blood, {frameWidth: 200, frameHeight: 200})
+        this.load.spritesheet('spider', spider, {frameWidth: 200, frameHeight: 200})
+        this.load.spritesheet('player', player, {frameWidth: 200, frameHeight: 200})
+        //this.load.spritesheet('jump', './src/assets/jump.png', {frameWidth:200, frameHeight:200})
+        this.load.spritesheet('attack', attack, {frameWidth: 200, frameHeight: 200})
+        this.load.spritesheet('snake', snake, {frameWidth: 200, frameHeight: 200})
+        this.load.spritesheet('wasp', wasp, {frameWidth: 200, frameHeight: 200})
+        this.load.spritesheet('waspstunned', waspstunned, {frameWidth: 200, frameHeight: 200})
+        this.load.spritesheet('gust', gust, {frameWidth: 200, frameHeight: 200})
 
-        this.load.image("bg", "./src/assets/grass_background.png")
-        this.load.image("health", "./src/assets/health_icon.png")
-        this.load.image("xp", "./src/assets/xp_icon.png")
-        this.load.image("speed", "./src/assets/speed_icon.png")
-        this.load.image("armour", "./src/assets/armour_icon.png")
+        this.load.image("bg", bg)
+        this.load.image("health", health)
+        this.load.image("xp", xp)
+        this.load.image("speed", speed)
+        this.load.image("armour", armour)
         this.animArray = []
     }
         
