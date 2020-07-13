@@ -288,7 +288,7 @@ export class GameScene extends Phaser.Scene {
             enemy.name = "wasp"+index
             enemy.aggroRange = 300
             enemy.health = 1000
-            enemy.damage = 500
+            enemy.damage = 200
             enemy.play('wasp0')
             
             enemy.anims.msPerFrame = 50
