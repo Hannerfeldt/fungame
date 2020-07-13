@@ -283,7 +283,7 @@ export class GameScene extends Phaser.Scene {
             
         }
 
-        for (let index = 0; index < 0; index++) {
+        for (let index = 0; index < 1; index++) {
             let enemy = new Wasp({scene: this, x: 1000*(index+1), y: 800, key: "wasp"})    
             enemy.name = "wasp"+index
             enemy.aggroRange = 300
