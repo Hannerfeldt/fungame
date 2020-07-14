@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config webpack/prod.js ",
     "start": "node server",
-    "heroku": "webpack-dev-server --config webpack/base.js --open"
+    "dev-start": "webpack-dev-server --config webpack/base.js --open"
   },
   "repository": {
     "type": "git",

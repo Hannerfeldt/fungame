@@ -1,3 +1,5 @@
+import { Projectile } from "./projectile"
+
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
     constructor(config) {
         super(config.scene, config.x, config.y, config.key)
@@ -49,8 +51,24 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             
             this.setVelocityY(yDir)
             this.setVelocityX(xDir)
-       
+            
+            if(this.canAttack) {
+                this.canAttack = false
+                this.attack(xDir, yDir)
+                setTimeout(()=> {
+                    this.canAttack = true
+                }, 3000)
+            }
         }
+    }
+
+    attack(x, y) {
+        //let webProjectile = this.scene.physics.add.image(this.x, this.y, "web2").setVelocity(x*3,y*3).setScale(0.75, 0.75).setSize(50,50)
+        
+        let webProjectile = new Projectile({scene:this.scene, x:this.x, y:this.y, key: "webprojectile"})
+        webProjectile.setVelocity(x*3,y*3)
+
+
     }
 
     takeDamage(cause) {

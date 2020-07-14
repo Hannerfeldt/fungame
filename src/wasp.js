@@ -18,14 +18,13 @@ export class Wasp extends Phaser.Physics.Arcade.Sprite {
         this.idle = true
         this.drop 
     }
+    
     movement(tx, ty) {
         if(this.stunned) { 
-            console.log(this.anims)
             if(this.anims.currentAnim.key == "waspstunned0") return
             this.play('waspstunned0') 
         }
         else { 
-            console.log("not stunned")
             if(this.idle)  {
                 this.play('wasp0')
                 this.idle = false 

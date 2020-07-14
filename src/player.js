@@ -5,7 +5,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this)
         this.speed = 300
         this.modSpeed = (this.baseSpeed*1.4)/2
-        this.isStunned = false
+        this.attacking = false
+        this.stunned = false
+        this.diminishingReturns = false
         this.facings = {
             TOP:'top',
             TOPRIGHT:'top_right',
@@ -18,8 +20,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         }
         this.facing = this.facings.TOP
         this.debugShowBody = false
-        this.maxHealth = 1000
-        this.health = 1000
+        this.maxHealth = 5
+        this.health = 5
         this.immune = false 
         this.damage = 50
         this.xp = 0
@@ -39,14 +41,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.setOrigin(this.halfWidth, this.halfHeight)
         this.setScale(1)
         this.setSize(100,175)
+        this.setImmovable = true
     }
     
     movement(inputs) {
         this.setVelocity(0,0)
         let trues = []
         trues = inputs.filter( e => { if(e) return e })
-        if ( !this.isStunned){
-            
+        if (this.stunned) return
+        if (!this.attacking ) {
             if (trues.length < 3) {
                 if (inputs[0]) {
                     if (inputs[1]) {
@@ -132,7 +135,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         if( this.dashIsReady ) {
             this.immune = true
             this.dashIsReady = false
-            
             this.speed = this.speed*7
             this.scene.gustEffect(this)
             setTimeout(()=>{
@@ -144,17 +146,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             }, 1000)
         }
         
-        console.log("dash")  
     }
 
     attack() {
         this.swingIsReady = false
-        this.isStunned = true
+        this.attacking = true
         // this.anims.pause(this.anims.currentAnim.frames[0])
         this.play('attack', true)
         
         setTimeout(()=>{
-            this.isStunned = false
+            this.attacking = false
         }, this.swingTimer/3)
         
         setTimeout(()=>{
@@ -162,18 +163,32 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         }, this.swingTimer)
     }
     
+    getStunned(time) {
+        this.stunned = true
+        setTimeout(()=>{
+            this.stunned = false
+            this.diminishingReturns = true
+            setTimeout(()=>{
+                this.diminishingReturns = false
+            })
+        }, time)
+    }
+
     takeDamage(cause, target) {
+        if (this.immune) return
+        this.immune = true
         this.setTint(0xff0000)
         setTimeout(()=>{
             this.clearTint()
         }, 100)
           
-        
-        target.health -= cause.damage
-        cause.canAttack = false
-        if(target.health <= 0) this.destroy()
+        this.scene.removeHeart()
+        this.health--
+        // cause.canAttack = false
+        if(this.health <= 0) this.destroy()
         setTimeout(() => {
-            cause.canAttack = true
-        }, cause.swingTimer)
+            this.immune = false
+            // cause.canAttack = true
+        }, 1500)
     }
 }

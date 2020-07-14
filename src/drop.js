@@ -11,25 +11,17 @@ export class Drop extends Phaser.Physics.Arcade.Image {
         this.setOrigin(-0.5,-0.5)
     } 
     effect() { 
-        console.log(this.name)
         switch (this.name) {
             case "health":
                 if (this.thing.player.health == this.thing.player.maxHealth) return
-                else if ( this.thing.player.health+100 >= this.thing.player.maxHealth) this.thing.player.health = this.thing.player.maxHealth, this.destroy()
-                else  this.thing.player.health += 100, this.destroy()
+                else  this.thing.player.health++, this.thing.addHeart(), this.destroy()
                break;
             case "xp":
                 this.thing.player.xp += 100
                 this.destroy()
-                   
                 break;
             case "speed":
                 this.thing.player.speed += 100
-                this.destroy()
-                break;
-            case "armour":
-                if(this.thing.player.armour == 5) return
-                this.thing.player.armour++
                 this.destroy()
                 break;
         }
