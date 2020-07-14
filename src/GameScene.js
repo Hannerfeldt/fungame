@@ -15,7 +15,7 @@ import snake from './assets/snake.png'
 import wasp from './assets/wasp.png'
 import waspstunned from './assets/waspstunned.png'
 import gust from './assets/gust.png'
-import web from './assets/web.png'
+import web from './assets/spider_web.png'
 import webprojectile from './assets/web_projectile.png'
 
 import bg from './assets/grass_background.png'
@@ -58,7 +58,6 @@ export class GameScene extends Phaser.Scene {
         this.load.image("xp", xp)
         this.load.image("speed", speed)
         this.load.image("heart", heart)
-        this.load.image("web2", web2)
         this.animArray = []
     }
         
