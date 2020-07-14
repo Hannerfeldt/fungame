@@ -237,8 +237,8 @@ export class GameScene extends Phaser.Scene {
                 enemy.onWorldBounds = true;
                 enemy.aggroRange = 500
                 enemy.debugShowVelocity = false
-                //let o = Math.round(Math.random()*10)
-                let o = 9
+                let o = Math.round(Math.random()*10)
+                // let o = 9
                 o == 8 ?  enemy.drop = "speed" : o == 9 ? enemy.drop = "health" : o == 10 ? enemy.drop = "xp" : enemy.drop = ""
                 
                 this.physics.add.overlap(enemy, this.player, (c,t) => {
