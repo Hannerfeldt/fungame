@@ -4,7 +4,7 @@ export class Spider extends Phaser.Physics.Arcade.Sprite {
     constructor(config) {
         super(config.scene, config.x, config.y, config.key)
         this.name = config.name
-        this.health = 20
+        this.health = 10
         this.stunned = false
         this.canAttack = true
         this.swingTimer = 1000
@@ -20,6 +20,7 @@ export class Spider extends Phaser.Physics.Arcade.Sprite {
             }
         }, null, this.scene)
     }
+
     create() {
 
         this.scene.add.existing(this)
@@ -33,6 +34,7 @@ export class Spider extends Phaser.Physics.Arcade.Sprite {
         this.body.onWorldBounds = true
         this.freeze = true
     }
+
     movement(tx, ty) {
         if(this.stunned) return
         else if(tx - this.x > this.aggroRange || tx - this.x < -this.aggroRange || ty - this.y > this.aggroRange || ty - this.y < -this.aggroRange ) { 
@@ -76,21 +78,14 @@ export class Spider extends Phaser.Physics.Arcade.Sprite {
     }
 
     attack(x, y) {
-        //let webProjectile = this.scene.physics.add.image(this.x, this.y, "web2").setVelocity(x*3,y*3).setScale(0.75, 0.75).setSize(50,50)
-        
         let webProjectile = new Projectile({scene:this.scene, x:this.x, y:this.y, key: "webprojectile"})
         webProjectile.setVelocity(x*3,y*3)
-
-
     }
 
     takeDamage(cause) {
-
         this.setVelocity(0,0)
-        // this.stunned = true
         this.health -= cause.damage
         cause.spentOn.push(this.name)
-        // this.healthbarUpdate()
         if (this.health <= 0 ) {
             if(this.drop) this.scene.drop(this.x,this.y, this.drop)
             this.destroy()
@@ -99,7 +94,6 @@ export class Spider extends Phaser.Physics.Arcade.Sprite {
             cause.spentOn = cause.spentOn.filter( (element) => {
                 element !== this.name
             })
-            // this.stunned = false
         }, cause.swingTimer)
     }
 

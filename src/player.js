@@ -48,7 +48,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.setVelocity(0,0)
         let trues = []
         trues = inputs.filter( e => { if(e) return e })
-        if (this.stunned) return
+        if (this.stunned) return this.play("stunned0", true)
         if (!this.attacking ) {
             if (trues.length < 3) {
                 if (inputs[0]) {
@@ -126,7 +126,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             }
             else {
                 // this.setFrame(0)
-                this.anims.currentAnim ? this.anims.pause(this.anims.currentAnim.frames[0]) : this.setFrame(0)
+                //this.anims.currentAnim ? this.anims.pause(this.anims.currentAnim.frames[0]) : this.setFrame(0)
             }
         }     
     }
@@ -152,7 +152,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.swingIsReady = false
         this.attacking = true
         // this.anims.pause(this.anims.currentAnim.frames[0])
-        this.play('attack', true)
+        this.play('attack0', true)
         
         setTimeout(()=>{
             this.attacking = false

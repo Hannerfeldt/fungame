@@ -9,7 +9,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
         this.rotation = 0
         this.debugShowBody = false
         this.debugShowVelocity = false
-        this.play(config.key)
+        this.play('webprojectile0')
         this.scene.physics.add.overlap(this, this.scene.player, this.onImpact, ()=>this.destroy(), this.scene)
     }
     

@@ -3,7 +3,7 @@ import { Player } from './player'
 import { Snake } from './snake'
 import { Wasp } from './wasp'
 import { Drop } from './drop'
-import { Enemy, Spider } from './spider'
+import { Spider } from './spider'
 import { Projectile } from './projectile'
 
 import swing from './assets/swing.png'
@@ -17,6 +17,7 @@ import waspstunned from './assets/waspstunned.png'
 import gust from './assets/gust.png'
 import web from './assets/spider_web.png'
 import webprojectile from './assets/web_projectile.png'
+import stunned from './assets/stunned.png'
 
 import bg from './assets/grass_background.png'
 import heart from './assets/heart.png'
@@ -31,7 +32,6 @@ export class GameScene extends Phaser.Scene {
         this.inputArray = [false, false, false, false]
         this.loots = [] 
         this.loadNextWave = true
-        
     }
     
     preload() {
@@ -41,13 +41,13 @@ export class GameScene extends Phaser.Scene {
         this.load.spritesheet('blood', blood, {frameWidth: 200, frameHeight: 200})
         this.load.spritesheet('spider', spider, {frameWidth: 200, frameHeight: 200})
         this.load.spritesheet('player', player, {frameWidth: 200, frameHeight: 200})
-        //this.load.spritesheet('jump', './src/assets/jump.png', {frameWidth:200, frameHeight:200})
         this.load.spritesheet('attack', attack, {frameWidth: 200, frameHeight: 200})
         this.load.spritesheet('snake', snake, {frameWidth: 200, frameHeight: 200})
         this.load.spritesheet('wasp', wasp, {frameWidth: 200, frameHeight: 200})
         this.load.spritesheet('waspstunned', waspstunned, {frameWidth: 200, frameHeight: 200})
         this.load.spritesheet('gust', gust, {frameWidth: 200, frameHeight: 200})
         this.load.spritesheet('webprojectile', webprojectile, {frameWidth: 200, frameHeight: 200})
+        this.load.spritesheet('stunned', stunned, {frameWidth: 200, frameHeight: 200})
         
         this.load.image('web', web)
         this.load.image("bg", bg)
@@ -57,84 +57,44 @@ export class GameScene extends Phaser.Scene {
         this.load.image("heart", heart)
 
         this.animArray = []
-
+        this.enemies = []
         
     }
         
     create() {    
-        this.enemies = []
         this.physics.world.setBounds(0, 0, 1920, 1080, true, true, true, true);
+        
         for (let i = 0; i < 8; i++) {
-            let d = {skin:'player', key:[]}
-            for (let j = i*4; j < (i*4)+4; j++){
+            let d = {skin:'player', key:[], repeat: -1, rate: 10}
+            for (let j = i*4; j < (i*4)+4; j++) {
                 d.key.push(j)
             }
             this.animArray.push(d)
         }
+        
         for (let i = 0; i < 8; i++) {
-            let a = {skin:'jump', key:[]}
-            for (let j = i*9; j < (i*9)+10; j++){
+            let a = {skin:'jump', key:[], repeat: -1, rate: 10}
+            for (let j = i*9; j < (i*9)+10; j++) {
                 a.key.push(j)
             }
             this.animArray.push(a)
         }
         
-        this.animArray.push({skin:'spider', key:[0,1,2,3]})
-        this.animArray.push({skin:'snake', key:[0,1,2,3,4,5,6,7,8,9]})
-        //this.animArray.push({skin:'wasp', key:[0,1,2,3,4,5,6,7]})
-        //this.animArray.push({skin:'waspstunned', key:[0,1,2,3,4,5,6,7]})
+        this.animArray.push({skin:'spider', key:[0,1,2,3], repeat: -1, rate: 10})
+        this.animArray.push({skin:'snake', key:[0,1,2,3,4,5,6,7,8,9], repeat: -1, rate: 10})
+        this.animArray.push({skin:'stunned', key:[0,1,2,3,4], repeat: 0, rate: 24})
+        this.animArray.push({skin:'swing', key:[0,1,2,3,4,5,6,7,8], repeat: 0, rate: 600})
+        this.animArray.push({skin:'wasp', key:[0,1,2,3,4,5,6,7], repeat: -1, rate: 24})
+        this.animArray.push({skin:'waspstunned', key:[0,1,2,3,4,5,6,7], repeat: -1, rate: 24})
+        this.animArray.push({skin:'webprojectile', key:[0,1,2,3], repeat: -1, rate: 12})
+        this.animArray.push({skin:'blood', key:[0,1,2,3,4,5,6,7,8], repeat: 0, rate: 600})
+        this.animArray.push({skin:'attack', key:[0,1,2,3,4,5], repeat: 0, rate: 20})
+        this.animArray.push({skin:'gust', key:[0,1,2,3,4,5,6,7,8,9,10,11,12,13], repeat: 0, rate: 50})
         
-
         this.add.image(1920/2, 1080/2,"bg")
-
-        this.anims.create({
-            key:'swinging',
-            repeat: 0,
-            frameRate: 600,
-            frames: this.anims.generateFrameNames('swing', {start:0, end: 8})
-        })
-        this.anims.create({
-            key:'wasp0',
-            repeat: -1,
-            frameRate: 24,
-            frames: this.anims.generateFrameNames('wasp', {start:0, end: 7})
-        })
-        this.anims.create({
-            key:'waspstunned0',
-            repeat: -1,
-            frameRate: 24,
-            frames: this.anims.generateFrameNames('waspstunned', {start:0, end: 7})
-        })
-        this.anims.create({
-            key:'webprojectile',
-            repeat: -1,
-            frameRate: 12,
-            frames: this.anims.generateFrameNames('webprojectile', {start:0, end: 3})
-        })
-        
-        this.anims.create({
-            key:'bloodeffect',
-            repeat: 0,
-            frameRate: 600,
-            frames: this.anims.generateFrameNames('blood', {start:0, end: 8})
-        })
-        
-        this.anims.create({
-            key:'attack',
-            repeat:0,
-            frameRate: 20,
-            frames: this.anims.generateFrameNames('attack', {start:0, end: 5})
-        })
-
-        this.anims.create({
-            key:'gusteffect',
-            repeat:0,
-            frameRate: 50,
-            frames: this.anims.generateFrameNames('gust', {start:0, end:13})
-        })
         
         this.animArray.forEach((e)=>{
-            this.animationsCreate(e.skin, e.key)
+            this.animationsCreate(e.skin, e.key, e.repeat, e.rate)
         })
         this.player = new Player(this)
 
@@ -155,20 +115,17 @@ export class GameScene extends Phaser.Scene {
             ]
         ]
 
-        
-        
-        
         this.enemyCreate(this.waves[0])
         this.healthbarCreate()
 
         this.player.setCollideWorldBounds(true);
         this.player.body.onWorldBounds = true;
         
-        this.physics.world.addCollider(this.enemies, this.enemies, ()=>{})
+       // this.physics.world.addCollider(this.enemies, this.enemies, ()=>{})
 
         this.physics.world.on('worldbounds', function(body){
             body.setVelocity(0,0);
-        },this);
+        }, this);
     }
     
     update() {
@@ -217,12 +174,11 @@ export class GameScene extends Phaser.Scene {
         
     }
 
-    animationsCreate(skin, key) {
-        
+    animationsCreate(skin, key, repeat, rate) {
         this.anims.create({
             key: skin+key[0],
-            repeat: -1,
-            frameRate: 10,
+            repeat: repeat,
+            frameRate: rate,
             frames: this.anims.generateFrameNames(skin, {frames: key})
         })
     }
@@ -260,7 +216,7 @@ export class GameScene extends Phaser.Scene {
 
     bloodEffect(target) {
         let blood = this.physics.add.sprite(target.x, target.y, "blood", 0).setOrigin(0.5, 0.5)
-        blood.play('bloodeffect')
+        blood.play('blood0')
         blood.debugShowBody = false
         setTimeout(()=>{
             blood.destroy()
@@ -313,7 +269,7 @@ export class GameScene extends Phaser.Scene {
         }
 
         gust.setOrigin(0.5,0.5)
-        gust.play('gusteffect')
+        gust.play('gust0')
 
         gust.debugShowBody = false
         setTimeout(()=>{
