@@ -1,24 +1,37 @@
 import { Projectile } from "./projectile"
 
-export class Enemy extends Phaser.Physics.Arcade.Sprite {
+export class Spider extends Phaser.Physics.Arcade.Sprite {
     constructor(config) {
         super(config.scene, config.x, config.y, config.key)
-        
-        config.scene.add.existing(this)
-        config.scene.physics.add.existing(this)
-        this.name
-        this.health
+        this.name = config.name
+        this.health = 20
         this.stunned = false
-        this.debugShowBody = false
-        this.damage
         this.canAttack = true
         this.swingTimer = 1000
+        this.speed = 100
+        this.aggroRange = 500
+        this.idle = true
+        this.random = Math.round(Math.random()*10)
+        this.drop = this.random == 8 ? "speed" : this.random == 9 ? "health" : this.random == 10 ? "xp" : ""
+        this.scene.physics.add.overlap(this, this.scene.player, (c,t) => {
+            if (!this.scene.player.immune) { 
+                this.scene.player.takeDamage(c,t)
+                this.scene.bloodEffect(t)
+            }
+        }, null, this.scene)
+    }
+    create() {
+
+        this.scene.add.existing(this)
+        this.scene.physics.add.existing(this)
+        this.debugShowBody = false
+        this.debugShowVelocity = false
         this.setSize(100, 100)
         this.setScale(0.75)
-        this.speed
-        this.aggroRange
-        this.idle = true
-        this.drop 
+        this.play('spider0')
+        this.setCollideWorldBounds(true)
+        this.body.onWorldBounds = true
+        this.freeze = true
     }
     movement(tx, ty) {
         if(this.stunned) return

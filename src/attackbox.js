@@ -9,7 +9,7 @@ export class AttackBox extends Phaser.Physics.Arcade.Sprite {
         this.rotation = config.r
         this.spentOn = []
         this.debugShowBody = false
-        this.damage = 50
+        this.damage = 10
         this.swingTimer = 800
     }
 }

@@ -242,3 +242,84 @@
         // this.graphics1.fillRectShape(this.rect)
         // this.graphics = this.add.graphics({ fillStyle: { color: 0x00ff00 } })
         // this.graphics.fillRectShape(this.rect)
+
+             // if ( key == 'spider') {
+        //     for (let index = 0; index < amount; index++) {
+        //         let enemy = new Enemy({scene: this, x: ((1920/5)*index)+100, y: 800, key: "spider"})    
+        //         enemy.name = "spider"+index
+        //         enemy.health = 10
+        
+        //         enemy.play('spider0')
+        //         enemy.speed = 100
+        //         enemy.setCollideWorldBounds(true);
+        //         enemy.onWorldBounds = true;
+        //         enemy.aggroRange = 500
+                
+        //         let o = Math.round(Math.random()*10)
+        //         // let o = 9
+        //         o == 8 ?  enemy.drop = "speed" : o == 9 ? enemy.drop = "health" : o == 10 ? enemy.drop = "xp" : enemy.drop = ""
+                
+        //         this.physics.add.overlap(enemy, this.player, (c,t) => {
+        //             if (!this.player.immune) { 
+        //                 this.player.takeDamage(c,t)
+        //                 this.bloodEffect(t)
+                         
+        //             }
+        //         }, null, this)
+        //         this.enemies.push(enemy)
+        //     }
+        // }
+
+        // if( key == 'snake') {
+        //     for (let index = 0; index < amount; index++) {
+        //         let enemy = new Snake({scene: this, x: 1200*(index+1), y: 500, key: "snake"})    
+        //         enemy.name = "snake"+index
+        //         enemy.aggroRange = 500
+        //         enemy.health = 20
+        //         enemy.damage = 50
+        //         enemy.play('snake0')
+        //         enemy.anims.msPerFrame = 100
+        //         enemy.speed = 300
+        //         enemy.setCollideWorldBounds(true);
+        //         enemy.onWorldBounds = true;
+        //         enemy.debugShowVelocity = false
+        //         let o = Math.round(Math.random()*10)
+        //         //let o = 7
+        //         o == 8 ?  enemy.drop = "speed" : o == 9 ? enemy.drop = "health" : o == 10 ? enemy.drop = "xp" :  enemy.drop = ""
+                
+        //         this.physics.world.addCollider(enemy, this.player, (c,t) => {
+        //             if (c.canAttack && !this.player.immune) this.player.takeDamage(c,t), this.bloodEffect(t)
+        //         }, null, this)
+        //         this.enemies.push(enemy)
+        //     }
+        // }
+
+        // if( key == 'wasp'){
+        //     for (let index = 0; index < amount; index++) {
+        //         let enemy = new Wasp({scene: this, x: 1000*(index+1), y: 800, key: "wasp"})    
+        //         enemy.name = "wasp"+index
+        //         enemy.aggroRange = 300
+        //         enemy.health = 50
+        //         enemy.damage = 200
+        //         enemy.play('wasp0')
+                
+        //         enemy.anims.msPerFrame = 50
+        //         enemy.speed = 1500
+        //         enemy.body.setCollideWorldBounds(true);
+        //         enemy.body.onWorldBounds = true;
+        //         enemy.debugShowVelocity = false
+                
+        //         enemy.stunned = true
+        //         setTimeout(()=>{
+        //             enemy.stunned = false
+        //         }, 3000)
+        //         let o = Math.round(Math.random()*10)
+        //         //let o = 7
+        //         o == 7 ?  enemy.drop = "speed" : o == 9 ? enemy.drop = "health" : o == 10 ? enemy.drop = "xp" :  enemy.drop = ""
+                
+        //         this.physics.add.overlap(enemy, this.player, (c,t) => {
+        //             if (c.canAttack && !this.player.immune) this.player.takeDamage(c,t), this.bloodEffect(t)
+        //         }, null, this)
+        //         this.enemies.push(enemy)
+        //     }
+        // }

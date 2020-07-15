@@ -3,7 +3,7 @@ import { Player } from './player'
 import { Snake } from './snake'
 import { Wasp } from './wasp'
 import { Drop } from './drop'
-import { Enemy } from './enemy'
+import { Enemy, Spider } from './spider'
 import { Projectile } from './projectile'
 
 import swing from './assets/swing.png'
@@ -29,12 +29,9 @@ export class GameScene extends Phaser.Scene {
         super({key:"GameScene"})
         this.player
         this.inputArray = [false, false, false, false]
-        this.loots = []
-        this.waves = [
-            {key: "spider", amount:5}, 
-            {key: "snake", amount:3}, 
-            {key: "wasp", amount:1}, 
-        ]
+        this.loots = [] 
+        this.loadNextWave = true
+        
     }
     
     preload() {
@@ -58,12 +55,15 @@ export class GameScene extends Phaser.Scene {
         this.load.image("xp", xp)
         this.load.image("speed", speed)
         this.load.image("heart", heart)
+
         this.animArray = []
+
+        
     }
         
     create() {    
+        this.enemies = []
         this.physics.world.setBounds(0, 0, 1920, 1080, true, true, true, true);
-       
         for (let i = 0; i < 8; i++) {
             let d = {skin:'player', key:[]}
             for (let j = i*4; j < (i*4)+4; j++){
@@ -137,8 +137,28 @@ export class GameScene extends Phaser.Scene {
             this.animationsCreate(e.skin, e.key)
         })
         this.player = new Player(this)
+
+        this.waves = [
+            [
+                new Spider({scene:this, x:100, y:800, key:"spider", name: "spider1"}),
+                new Spider({scene:this, x:250, y:800, key:"spider",  name: "spider2"}),
+                new Spider({scene:this, x:400, y:800, key:"spider",  name: "spider3"}),
+                new Spider({scene:this, x:550, y:800, key:"spider",  name: "spider4"}),
+                new Spider({scene:this, x:700, y:800, key:"spider",  name: "spider5"})
+            ],
+            [
+                new Wasp({scene:this, x:100, y:800, key:"wasp", name:"wasp1"}),
+                new Spider({scene:this, x:900, y:800, key:"spider", name:"spider1"}),
+            ],
+            [
+                new Wasp({scene:this, x:100, y:800, key:"wasp", name:"wasp1"})
+            ]
+        ]
+
         
-        this.enemyCreate(this.waves[0].key, this.waves[0].amount)
+        
+        
+        this.enemyCreate(this.waves[0])
         this.healthbarCreate()
 
         this.player.setCollideWorldBounds(true);
@@ -152,16 +172,21 @@ export class GameScene extends Phaser.Scene {
     }
     
     update() {
-        if (this.enemies.every(e => e.active === false)) {
+        if (this.enemies.length == 0 && this.loadNextWave) {
+            this.loadNextWave = false
             this.waves.shift()
-            if ( this.waves.length  != 0) this.enemyCreate(this.waves[0].key, this.waves[0].amount)
+    
+            if ( this.waves.length  != 0) {
+                setTimeout(()=>{
+                    this.enemyCreate(this.waves[0])
+                    this.loadNextWave = true
+                }, 5000)
+            }
         }
-        this.enemies.forEach((e, i, a)=>{
+        this.enemies.forEach((e, i, a) => {
+            if (e.freeze) return
             e.active ? e.movement(this.player.x, this.player.y) : a.splice(i,1)
         })
-
-
-        //this.healthbarUpdate()
         this.checksInput()
     }
 
@@ -221,89 +246,16 @@ export class GameScene extends Phaser.Scene {
 
 
 
-    enemyCreate(key, amount) {
-        this.enemies = []
-        if ( key == 'spider') {
-            for (let index = 0; index < amount; index++) {
-                let enemy = new Enemy({scene: this, x: ((1920/5)*index)+100, y: 800, key: "spider"})    
-                enemy.name = "spider"+index
-                enemy.health = 100
-        
-                enemy.play('spider0')
-                enemy.speed = 100
-                enemy.setCollideWorldBounds(true);
-                enemy.onWorldBounds = true;
-                enemy.aggroRange = 500
-                enemy.debugShowVelocity = false
-                let o = Math.round(Math.random()*10)
-                // let o = 9
-                o == 8 ?  enemy.drop = "speed" : o == 9 ? enemy.drop = "health" : o == 10 ? enemy.drop = "xp" : enemy.drop = ""
-                
-                this.physics.add.overlap(enemy, this.player, (c,t) => {
-                    if (!this.player.immune) { 
-                        this.player.takeDamage(c,t)
-                        this.bloodEffect(t)
-                         
-                    }
-                }, null, this)
-                this.enemies.push(enemy)
-            }
-        }
+    enemyCreate(w) {
 
-        if( key == 'snake') {
-
-            for (let index = 0; index < amount; index++) {
-                let enemy = new Snake({scene: this, x: 1200*(index+1), y: 500, key: "snake"})    
-                enemy.name = "snake"+index
-                enemy.aggroRange = 500
-                enemy.health = 100
-                enemy.damage = 50
-                enemy.play('snake0')
-                enemy.anims.msPerFrame = 100
-                enemy.speed = 300
-                enemy.setCollideWorldBounds(true);
-                enemy.onWorldBounds = true;
-                enemy.debugShowVelocity = false
-                let o = Math.round(Math.random()*10)
-                //let o = 7
-                o == 8 ?  enemy.drop = "speed" : o == 9 ? enemy.drop = "health" : o == 10 ? enemy.drop = "xp" :  enemy.drop = ""
-                
-                this.physics.world.addCollider(enemy, this.player, (c,t) => {
-                    if (c.canAttack && !this.player.immune) this.player.takeDamage(c,t), this.bloodEffect(t)
-                }, null, this)
-                this.enemies.push(enemy)
-            }
-        }
-
-        if( key == 'wasp'){
-            for (let index = 0; index < amount; index++) {
-                let enemy = new Wasp({scene: this, x: 1000*(index+1), y: 800, key: "wasp"})    
-                enemy.name = "wasp"+index
-                enemy.aggroRange = 300
-                enemy.health = 500
-                enemy.damage = 200
-                enemy.play('wasp0')
-                
-                enemy.anims.msPerFrame = 50
-                enemy.speed = 1500
-                enemy.body.setCollideWorldBounds(true);
-                enemy.body.onWorldBounds = true;
-                enemy.debugShowVelocity = false
-                
-                enemy.stunned = true
-                setTimeout(()=>{
-                    enemy.stunned = false
-                }, 3000)
-                let o = Math.round(Math.random()*10)
-                //let o = 7
-                o == 7 ?  enemy.drop = "speed" : o == 9 ? enemy.drop = "health" : o == 10 ? enemy.drop = "xp" :  enemy.drop = ""
-                
-                this.physics.add.overlap(enemy, this.player, (c,t) => {
-                    if (c.canAttack && !this.player.immune) this.player.takeDamage(c,t), this.bloodEffect(t)
-                }, null, this)
-                this.enemies.push(enemy)
-            }
-        }
+        w.forEach(e => {
+            e.create()
+            setTimeout(()=> {
+                e.freeze = false
+            }, 4000)
+            this.enemies.push(e)
+        });
+   
     }
 
     bloodEffect(target) {

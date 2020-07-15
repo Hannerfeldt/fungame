@@ -1,22 +1,30 @@
 export class Wasp extends Phaser.Physics.Arcade.Sprite {
     constructor(config) {
         super(config.scene, config.x, config.y, config.key)
-        
-        config.scene.add.existing(this)
-        config.scene.physics.add.existing(this)
-        this.name
-        this.health
+        this.name = config.name
+        this.health = 50
         this.stunned = false
-        this.debugShowBody = false
-        this.damage
         this.canAttack = true
         this.swingTimer = 1000
-        this.setSize(100, 100)
-        this.setScale(1)
-        this.speed
-        this.aggroRange
+        this.speed = 1500
+        this.aggroRange 
         this.idle = true
         this.drop 
+        this.scene.physics.add.overlap(this, this.scene.player, (c,t) => {
+            if (this.canAttack && !this.scene.player.immune) this.scene.player.takeDamage(c,t), this.scene.bloodEffect(t)
+        }, null, this.scene)
+    }
+    create() {
+        this.scene.add.existing(this)
+        this.scene.physics.add.existing(this)
+        this.body.onWorldBounds = true;
+        this.debugShowBody = false
+        this.debugShowVelocity = false
+        this.setSize(100, 100)
+        this.setScale(1)
+        this.play('wasp0')
+        this.setCollideWorldBounds(true)
+        this.freeze = true
     }
     
     movement(tx, ty) {
@@ -56,7 +64,7 @@ export class Wasp extends Phaser.Physics.Arcade.Sprite {
     }
 
     takeDamage(cause) {
-
+        console.log(cause)
         this.setVelocity(0,0)
         this.stunned = true
         this.health -= cause.damage

@@ -17,8 +17,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
         if (t.stunned) return 
         if (t.diminishingReturns) return
         t.getStunned(1000)
-        
-        console.log(this)
+
         let web = this.add.image(t.x,(t.y+50), "web")
         setTimeout(()=>{
             web.destroy()

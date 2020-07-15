@@ -170,7 +170,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             this.diminishingReturns = true
             setTimeout(()=>{
                 this.diminishingReturns = false
-            })
+            }, time)
         }, time)
     }
 
