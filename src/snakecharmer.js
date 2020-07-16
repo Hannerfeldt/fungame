@@ -27,7 +27,7 @@ export class SnakeCharmer extends Phaser.Physics.Arcade.Sprite {
         this.scene.physics.add.existing(this)
         this.debugShowBody = false
         this.debugShowVelocity = false
-        this.setSize(100, 100)
+        this.setSize(100, 175)
         this.setScale(1)
         this.play('snakecharmer0')
         this.setCollideWorldBounds(true)
@@ -82,6 +82,10 @@ export class SnakeCharmer extends Phaser.Physics.Arcade.Sprite {
 
     takeDamage(cause) {
         this.health -= cause.damage
+        this.setTintFill(0xffffff)
+        setTimeout(()=> {
+            this.clearTint()
+        }, 200)
         cause.spentOn.push(this.name)
         if (this.health <= 0 ) {
             if(this.drop) this.scene.drop(this.x,this.y, this.drop)

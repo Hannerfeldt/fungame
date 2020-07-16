@@ -133,19 +133,29 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     dash() {
         if( this.dashIsReady ) {
-            this.immune = true
+            if(!this.immune) this.getImmune(100)
             this.dashIsReady = false
+            this.setTint(0x000000)
+            this.alpha = 0.2
             this.speed = this.speed*7
             this.scene.gustEffect(this)
             setTimeout(()=>{
+                this.clearTint()
+                this.alpha = 1
                 this.speed = 300
-                this.immune = false
             }, 100)
             setTimeout(()=>{
                 this.dashIsReady = true
             }, 1000)
         }
         
+    }
+
+    getImmune(time) {
+        this.immune = true
+        setTimeout(()=> {
+            this.immune = false
+        }, time)
     }
 
     attack() {
@@ -176,19 +186,26 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     takeDamage(cause, target) {
         if (this.immune) return
-        this.immune = true
+        this.getImmune(1500)
         this.setTint(0xff0000)
         setTimeout(()=>{
             this.clearTint()
         }, 100)
-          
+        
+        for( let i = 0; i < 5; i++ ) {
+            setTimeout(()=>{
+                this.setTintFill(0xffffff)
+                this.alpha = 0.7
+            }, 100+(200*i))
+            setTimeout(()=>{
+                this.alpha = 1
+                this.clearTint()
+            }, 200+(200*i))
+        }
+
+
         this.scene.removeHeart()
         this.health--
-        // cause.canAttack = false
         if(this.health <= 0) this.destroy()
-        setTimeout(() => {
-            this.immune = false
-            // cause.canAttack = true
-        }, 1500)
     }
 }

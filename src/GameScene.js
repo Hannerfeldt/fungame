@@ -135,6 +135,8 @@ export class GameScene extends Phaser.Scene {
         this.physics.world.on('worldbounds', function(body){
             body.setVelocity(0,0);
         }, this);
+
+            
     }
     
     update() {
