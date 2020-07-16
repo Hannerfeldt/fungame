@@ -15,7 +15,9 @@ export class Snake extends Phaser.Physics.Arcade.Sprite {
             }
         }, null, this.scene)
     }
-
+    onBounds() {
+        this.destroy()
+    }
     create() {
         this.scene.add.existing(this)
         this.scene.physics.add.existing(this)
@@ -24,8 +26,10 @@ export class Snake extends Phaser.Physics.Arcade.Sprite {
         this.setSize(125, 50)
         this.setScale(1)
         this.play('snake0')
-        this.rotation = this.x == 1920 ? Math.PI/2 : -Math.PI/2
-    }
+        this.rotation = this.x > 100 ? Math.PI/2 : -Math.PI/2
+        this.setCollideWorldBounds(true)
+        this.body.onWorldBounds = true
+        }
 
     movement() {
         if(this.x - 960 < 0) this.setVelocityX(this.speed)

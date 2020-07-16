@@ -20,10 +20,13 @@ import gust from './assets/gust.png'
 import web from './assets/spider_web.png'
 import webprojectile from './assets/web_projectile.png'
 import stunned from './assets/stunned.png'
+import notes from './assets/notes.png'
+import smoke from './assets/smoke.png'
 
 import bg from './assets/grass_background.png'
 import dbg from './assets/desert_background.png'
 import heart from './assets/heart.png'
+import blackheart from './assets/black_heart.png'
 import health from './assets/health_icon.png'
 import xp from './assets/xp_icon.png'
 import speed from './assets/speed_icon.png'
@@ -52,8 +55,11 @@ export class GameScene extends Phaser.Scene {
         this.load.spritesheet('webprojectile', webprojectile, {frameWidth: 200, frameHeight: 200})
         this.load.spritesheet('stunned', stunned, {frameWidth: 200, frameHeight: 200})
         this.load.spritesheet('snakecharmer', snakecharmer, {frameWidth: 200, frameHeight: 200})
+        this.load.spritesheet("notes", notes, {frameWidth: 200, frameHeight: 200})
+        this.load.spritesheet("smoke", smoke, {frameWidth: 200, frameHeight: 200})
         
         this.load.image('web', web)
+        this.load.image('blackheart', blackheart)
         this.load.image("bg", bg)
         this.load.image("dbg", dbg)
         this.load.image("health", health)
@@ -86,7 +92,7 @@ export class GameScene extends Phaser.Scene {
         }
         
         this.animArray.push({skin:'spider', key:[0,1,2,3], repeat: -1, rate: 10})
-        this.animArray.push({skin:'snake', key:[0,1,2,3,4,5,6,7,8,9], repeat: -1, rate: 10})
+        this.animArray.push({skin:'snake', key:[0,1,2,3,4,5,6,7,8,9], repeat: -1, rate: 12})
         this.animArray.push({skin:'stunned', key:[0,1,2,3,4], repeat: 0, rate: 24})
         this.animArray.push({skin:'swing', key:[0,1,2,3,4,5,6,7,8], repeat: 0, rate: 600})
         this.animArray.push({skin:'wasp', key:[0,1,2,3,4,5,6,7], repeat: -1, rate: 24})
@@ -95,7 +101,9 @@ export class GameScene extends Phaser.Scene {
         this.animArray.push({skin:'blood', key:[0,1,2,3,4,5,6,7,8], repeat: 0, rate: 600})
         this.animArray.push({skin:'attack', key:[0,1,2,3,4,5], repeat: 0, rate: 20})
         this.animArray.push({skin:'gust', key:[0,1,2,3,4,5,6,7,8,9,10,11,12,13], repeat: 0, rate: 50})
-        this.animArray.push({skin:'snakecharmer', key:[0,1,2,3,4], repeat: -1, rate: 6})
+        this.animArray.push({skin:'snakecharmer', key:[0,1,2,3,4,5], repeat: -1, rate: 6})
+        this.animArray.push({skin:'notes', key:[0,1,2,3], repeat: -1, rate: 6})
+        this.animArray.push({skin:'smoke', key:[0,1,2,3,4,5,6,7,8,9,10,11], repeat: 0, rate: 12})
         
         this.add.image(1920/2, 1080/2,"dbg")
         
@@ -132,9 +140,7 @@ export class GameScene extends Phaser.Scene {
         
        // this.physics.world.addCollider(this.enemies, this.enemies, ()=>{})
 
-        this.physics.world.on('worldbounds', function(body){
-            body.setVelocity(0,0);
-        }, this);
+        this.physics.world.on('worldbounds', (body)=>{body.gameObject.onBounds()}, this);
 
             
     }
@@ -156,6 +162,7 @@ export class GameScene extends Phaser.Scene {
             e.active ? e.movement(this.player.x, this.player.y) : a.splice(i,1)
         })
         this.checksInput()
+        console.log(this.add.displayList.list)
     }
 
     checksInput() {
@@ -196,9 +203,9 @@ export class GameScene extends Phaser.Scene {
 
     healthbarCreate() {
         this.hearts = []
-        for ( let i=0; i < this.player.health; i++ ){
+        for (let i=0; i < this.player.health; i++) {
+            this.add.image(50+(75*i), 1080-50,"blackheart").setScale(0.5, 0.5)
             this.hearts.push(this.add.image(50+(75*i), 1080-50,"heart").setScale(0.5, 0.5))
-
         }
     }
 

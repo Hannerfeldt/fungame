@@ -81,7 +81,9 @@ export class Spider extends Phaser.Physics.Arcade.Sprite {
         let webProjectile = new Projectile({scene:this.scene, x:this.x, y:this.y, key: "webprojectile"})
         webProjectile.setVelocity(x*3,y*3)
     }
-
+    onBounds() {
+        this.setVelocity(0,0)
+    }
     takeDamage(cause) {
         this.setVelocity(0,0)
         this.health -= cause.damage

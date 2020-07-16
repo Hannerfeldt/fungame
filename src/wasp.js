@@ -26,7 +26,9 @@ export class Wasp extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds(true)
         this.freeze = true
     }
-    
+    onBounds() {
+        this.setVelocity(0,0)
+    }
     movement(tx, ty) {
         if(this.stunned) { 
             if(this.anims.currentAnim.key == "waspstunned0") return

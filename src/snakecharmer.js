@@ -4,7 +4,7 @@ export class SnakeCharmer extends Phaser.Physics.Arcade.Sprite {
     constructor(config) {
         super(config.scene, config.x, config.y, config.key)
         this.name = config.name
-        this.health = 100
+        this.health = 150
         this.stunned = false
         this.canAttack = true
         this.swingTimer = 1000
@@ -13,6 +13,7 @@ export class SnakeCharmer extends Phaser.Physics.Arcade.Sprite {
         this.idle = true
         this.random = Math.round(Math.random()*10)
         this.drop = this.random == 8 ? "speed" : this.random == 9 ? "health" : this.random == 10 ? "xp" : ""
+        this.idleTimer
         this.scene.physics.add.overlap(this, this.scene.player, (c,t) => {
             if (!this.scene.player.immune) { 
                 this.scene.player.takeDamage(c,t)
@@ -27,28 +28,30 @@ export class SnakeCharmer extends Phaser.Physics.Arcade.Sprite {
         this.scene.physics.add.existing(this)
         this.debugShowBody = false
         this.debugShowVelocity = false
-        this.setSize(120, 170)
+        this.setSize(120, 160)
         this.setScale(1)
         this.play('snakecharmer0')
         this.setCollideWorldBounds(true)
         this.body.onWorldBounds = true
         this.freeze = true
-    }
-
-    movement(tx, ty) {
         
+    }
+    onBounds(){
+        this.setVelocity(0,0)
+    }
+    movement() {
         if (this.canAttack) {
             this.canAttack=false
             this.attack()
             setTimeout(()=> {
                 this.canAttack = true
-            }, 1000 )
+            }, 2000 )
             
         }
         if(this.idle)  {
             this.idle = false 
-            let tx = 1920*Math.random()
-            let ty = 1080*Math.random()
+            let tx = 50+(1820*Math.random())
+            let ty = 50+(980*Math.random())
             let sum = (tx - this.x)/(ty - this.y)
             let yDir = Math.atan(sum)
             
@@ -62,38 +65,39 @@ export class SnakeCharmer extends Phaser.Physics.Arcade.Sprite {
             xDir = xDir * this.speed
             this.setVelocityY(yDir)
             this.setVelocityX(xDir)
-            setTimeout(()=>{
+            this.idleTimer = setTimeout(()=>{
                 this.idle = true
             }, 4000)
         }
-        
-      
     }
 
     attack() {
-        // let snake = new Snake({scene:this.scene, x:1920*Math.round(Math.random()), y:1080*Math.random(), key: "snake", name:"snake"})
-        let snake = new Snake({scene:this.scene, x:1920*Math.round(Math.random()), y:1080*Math.random(), key: "snake", name:"snake"})
-        snake.create()
-        snake.movement()
+        let x = 1920*Math.round(Math.random())
+        let y = 25+(1030*Math.random())
+        let notes = this.scene.add.sprite(x == 0 ? x+100 : x-100, y, "notes").play("notes0")
         setTimeout(()=>{
-            snake.destroy()
-        }, 5000)
+            let snake = new Snake({scene:this.scene, x:(x == 0 ? x+70 : x-70), y:y, key: "snake", name:"snake"})
+            snake.create()
+            snake.movement()
+            notes.destroy()
+        }, 1000)        
     }
 
     takeDamage(cause) {
         
         this.health -= cause.damage
-        if (this.health == 20) this.duplicate()
-        this.setTintFill(0xffffff)
-        setTimeout(()=> {
-            this.clearTint()
-        }, 200)
+        if (this.health == 50) {
+            this.duplicate()
+        }
+        else {
+            this.setTintFill(0xffffff)
+            setTimeout(()=> {
+                this.clearTint()
+            }, 200)
+        }
         cause.spentOn.push(this.name)
         if (this.health <= 0 ) {
             if(this.drop) this.scene.drop(this.x,this.y, this.drop)
-            this.scene.enemies.forEach(element => {
-                element.destroy()
-            });
             this.destroy()
         }
         setTimeout(() => {
@@ -104,11 +108,28 @@ export class SnakeCharmer extends Phaser.Physics.Arcade.Sprite {
     }
 
     duplicate() {
-        let o =  new SnakeCharmer({scene:this.scene, x:this.x, y:this.y, key:"snakecharmer", name:"snakecharmer2"})
-        o.health = 1000;
+        let o =  new SnakeCharmer({scene:this.scene, x:1920/2, y:1080/2, key:"snakecharmer", name:"snakecharmer2"})
+        o.health = 50
         o.create()
         o.freeze = false
-        console.log(this.scene.enemies)
+        o.idle = false
+        o.setTint(0xff00ff)
+        
         this.scene.enemies.push(o)
+        this.scene.add.sprite(1920/2, 1080/2, "smoke").play("smoke0")
+
+        this.x = 1920/2
+        this.y = 1080/2
+
+        this.idle = false
+        clearTimeout(this.idleTimer)
+        this.setTint(0xff00ff)
+
+        setTimeout(()=>{
+            this.idle = true
+            o.idle = true
+            this.clearTint()
+            o.clearTint()
+        },1000)
     }
 }

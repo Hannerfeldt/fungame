@@ -4,7 +4,7 @@ export class AttackBox extends Phaser.Physics.Arcade.Sprite {
         config.scene.add.existing(this)
         config.scene.physics.add.existing(this)
         this.setOrigin(0.5,0.5)
-        this.setSize(100, 100)
+        this.setSize(125, 125)
         this.play('swing0')
         this.rotation = config.r
         this.spentOn = []
