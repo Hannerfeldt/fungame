@@ -5,8 +5,10 @@ import { Wasp } from './wasp'
 import { Drop } from './drop'
 import { Spider } from './spider'
 import { Projectile } from './projectile'
+import { SnakeCharmer } from './snakecharmer'
 
 import swing from './assets/swing.png'
+import snakecharmer from './assets/snake_charmer.png'
 import blood from './assets/bloodeffect.png'
 import spider from './assets/spider.png'
 import player from './assets/player.png'
@@ -20,6 +22,7 @@ import webprojectile from './assets/web_projectile.png'
 import stunned from './assets/stunned.png'
 
 import bg from './assets/grass_background.png'
+import dbg from './assets/desert_background.png'
 import heart from './assets/heart.png'
 import health from './assets/health_icon.png'
 import xp from './assets/xp_icon.png'
@@ -48,9 +51,11 @@ export class GameScene extends Phaser.Scene {
         this.load.spritesheet('gust', gust, {frameWidth: 200, frameHeight: 200})
         this.load.spritesheet('webprojectile', webprojectile, {frameWidth: 200, frameHeight: 200})
         this.load.spritesheet('stunned', stunned, {frameWidth: 200, frameHeight: 200})
+        this.load.spritesheet('snakecharmer', snakecharmer, {frameWidth: 200, frameHeight: 200})
         
         this.load.image('web', web)
         this.load.image("bg", bg)
+        this.load.image("dbg", dbg)
         this.load.image("health", health)
         this.load.image("xp", xp)
         this.load.image("speed", speed)
@@ -90,8 +95,9 @@ export class GameScene extends Phaser.Scene {
         this.animArray.push({skin:'blood', key:[0,1,2,3,4,5,6,7,8], repeat: 0, rate: 600})
         this.animArray.push({skin:'attack', key:[0,1,2,3,4,5], repeat: 0, rate: 20})
         this.animArray.push({skin:'gust', key:[0,1,2,3,4,5,6,7,8,9,10,11,12,13], repeat: 0, rate: 50})
+        this.animArray.push({skin:'snakecharmer', key:[0,1,2,3,4], repeat: -1, rate: 6})
         
-        this.add.image(1920/2, 1080/2,"bg")
+        this.add.image(1920/2, 1080/2,"dbg")
         
         this.animArray.forEach((e)=>{
             this.animationsCreate(e.skin, e.key, e.repeat, e.rate)
@@ -99,6 +105,9 @@ export class GameScene extends Phaser.Scene {
         this.player = new Player(this)
 
         this.waves = [
+            [
+                new SnakeCharmer({scene:this, x:500, y:900, key:"snakecharmer", name:"snakecharmer1"})
+            ],
             [
                 new Spider({scene:this, x:100, y:800, key:"spider", name: "spider1"}),
                 new Spider({scene:this, x:250, y:800, key:"spider",  name: "spider2"}),
