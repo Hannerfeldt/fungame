@@ -21,7 +21,7 @@ export class Snake extends Phaser.Physics.Arcade.Sprite {
         this.scene.physics.add.existing(this)
         this.debugShowBody = false
         this.debugShowVelocity = false
-        this.setSize(150, 50)
+        this.setSize(125, 50)
         this.setScale(1)
         this.play('snake0')
         this.rotation = this.x == 1920 ? Math.PI/2 : -Math.PI/2

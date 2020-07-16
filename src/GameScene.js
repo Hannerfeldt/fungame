@@ -144,7 +144,7 @@ export class GameScene extends Phaser.Scene {
             this.loadNextWave = false
             this.waves.shift()
     
-            if ( this.waves.length  != 0) {
+            if (this.waves.length  != 0) {
                 setTimeout(()=>{
                     this.enemyCreate(this.waves[0])
                     this.loadNextWave = true
