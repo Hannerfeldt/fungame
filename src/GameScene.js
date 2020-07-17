@@ -31,6 +31,8 @@ import health from './assets/health_icon.png'
 import xp from './assets/xp_icon.png'
 import speed from './assets/speed_icon.png'
 
+import level1 from './assets/level1.mp3'
+
 export class GameScene extends Phaser.Scene {   
     constructor() {
         super({key:"GameScene"})
@@ -66,6 +68,8 @@ export class GameScene extends Phaser.Scene {
         this.load.image("xp", xp)
         this.load.image("speed", speed)
         this.load.image("heart", heart)
+        
+        this.load.audio("level1", level1)
 
         this.animArray = []
         this.enemies = []
@@ -141,7 +145,10 @@ export class GameScene extends Phaser.Scene {
        // this.physics.world.addCollider(this.enemies, this.enemies, ()=>{})
 
         this.physics.world.on('worldbounds', (body)=>{body.gameObject.onBounds()}, this);
+        
+        this.music = this.sound.add("level1")
 
+        this.music.play()
             
     }
     
