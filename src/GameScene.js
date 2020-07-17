@@ -22,6 +22,7 @@ import webprojectile from './assets/web_projectile.png'
 import stunned from './assets/stunned.png'
 import notes from './assets/notes.png'
 import smoke from './assets/smoke.png'
+import genie from './assets/genie.png'
 
 import bg from './assets/grass_background.png'
 import dbg from './assets/desert_background.png'
@@ -59,6 +60,7 @@ export class GameScene extends Phaser.Scene {
         this.load.spritesheet('snakecharmer', snakecharmer, {frameWidth: 200, frameHeight: 200})
         this.load.spritesheet("notes", notes, {frameWidth: 200, frameHeight: 200})
         this.load.spritesheet("smoke", smoke, {frameWidth: 200, frameHeight: 200})
+        this.load.spritesheet("genie", genie, {frameWidth: 200, frameHeight: 200})
         
         this.load.image('web', web)
         this.load.image('blackheart', blackheart)
@@ -108,6 +110,8 @@ export class GameScene extends Phaser.Scene {
         this.animArray.push({skin:'snakecharmer', key:[0,1,2,3,4,5], repeat: -1, rate: 6})
         this.animArray.push({skin:'notes', key:[0,1,2,3], repeat: -1, rate: 6})
         this.animArray.push({skin:'smoke', key:[0,1,2,3,4,5,6,7,8,9,10,11], repeat: 0, rate: 12})
+        this.animArray.push({skin:'genie', key:[0,1,2,3], repeat: -1, rate: 12})
+        this.animArray.push({skin:'genieattack', key:[4,5,6,7,8], repeat: 0, rate: 12})
         
         this.add.image(1920/2, 1080/2,"dbg")
         
