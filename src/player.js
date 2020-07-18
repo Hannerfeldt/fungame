@@ -137,13 +137,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             this.dashIsReady = false
             this.setTint(0x000000)
             this.alpha = 0.2
-            this.speed = this.speed*7
+            this.speed = this.speed*10
             this.scene.gustEffect(this)
             setTimeout(()=>{
                 this.clearTint()
                 this.alpha = 1
                 this.speed = 300
-            }, 150)
+            }, 100)
             setTimeout(()=>{
                 this.dashIsReady = true
             }, 1000)

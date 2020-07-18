@@ -1,4 +1,6 @@
-import { Snake } from "./snake"
+import {
+    Lamp
+} from "./lamp"
 
 export class Genie extends Phaser.Physics.Arcade.Sprite {
     constructor(config) {
@@ -11,127 +13,174 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
         this.speed = 1000
         this.aggroRange = 500
         this.idle = true
-        this.random = Math.round(Math.random()*10)
+        this.attackDir = true
+        this.enraged = false
+        this.random = Math.round(Math.random() * 10)
         this.drop = this.random == 8 ? "speed" : this.random == 9 ? "health" : this.random == 10 ? "xp" : ""
         this.idleTimer
-        this.scene.physics.add.overlap(this, this.scene.player, (c,t) => {
-            if (!this.scene.player.immune) { 
-                this.scene.player.takeDamage(c,t)
+        this.scene.physics.add.overlap(this, this.scene.player, (c, t) => {
+            if (!this.scene.player.immune) {
+                this.scene.player.takeDamage(c, t)
                 this.scene.bloodEffect(t)
             }
         }, null, this.scene)
     }
 
     create() {
-
+        this.o = true
         this.scene.add.existing(this)
         this.scene.physics.add.existing(this)
         this.debugShowBody = false
         this.debugShowVelocity = false
-        this.setSize(120, 160)
-        this.setScale(1)
+        this.setSize(80, 160)
+        this.setScale(2)
         this.play('genie0')
         this.setCollideWorldBounds(true)
         this.body.onWorldBounds = true
         this.freeze = true
-        
+        this.lamp = new Lamp({
+            scene: this.scene,
+            x: 500,
+            y: 600,
+            key: "lamp",
+            name: "lamp1"
+        })
+        this.lamp.create()
+
     }
 
-    onBounds(){
-        this.setVelocity(0,0)
+    onBounds() {
+        this.setVelocity(0, 0)
     }
-    
+
     movement() {
-        if (this.canAttack) {
-            this.canAttack=false
-            this.attack()
-            setTimeout(()=> {
-                this.canAttack = true
-            }, 2000 )
-            
+        if (!this.enraged) {
+            if (this.idle) {
+                this.idle = false
+                let xpos = this.scene.player.x
+                let ypos = this.scene.player.y
+                let c = this.scene.add.image(xpos, ypos, "circle")
+                setTimeout(() => {
+                    this.x = xpos
+                    this.y = ypos
+                    let s = this.scene.add.sprite(xpos, ypos, "smoke")
+                    s.play("smoke0")
+                    s.setScale(3)
+                    s.setTint(0x5500bb)
+                    s.once("animationcomplete", ()=>s.destroy())
+                    c.destroy()
+                }, 1000)
+
+                this.attackInterval = setInterval(() => {
+                    this.attack()
+                }, 1000)
+
+                this.idleTimer = setTimeout(() => {
+                    clearInterval(this.attackInterval)
+                    this.play("genie0")
+                    this.idle = true
+                }, 5100)
+            }
+        } else {
+            if (this.o) {
+                clearTimeout(this.idleTimer)
+                clearInterval(this.attackInterval)
+                this.play("genie9", true)
+                this.attackInterval = setInterval(() => {
+                    this.enragedAttack()
+                }, 1500)
+                this.o = false
+            }
         }
-        if(this.idle)  {
-            this.idle = false 
-            let tx = 50+(1820*Math.random())
-            let ty = 50+(980*Math.random())
-            let sum = (tx - this.x)/(ty - this.y)
-            let yDir = Math.atan(sum)
-            
-            yDir = Math.cos(yDir)
-            if((ty - this.y)<0) yDir = -yDir
-            yDir = yDir * this.speed
-            
-            let xDir = Math.atan(sum)
-            xDir = Math.sin(xDir)
-            if((ty - this.y)<0) xDir = -xDir
-            xDir = xDir * this.speed
-            this.setVelocityY(yDir)
-            this.setVelocityX(xDir)
-            this.idleTimer = setTimeout(()=>{
-                this.idle = true
-            }, 4000)
-        }
+    }
+
+    die() {
+        clearInterval(this.attackInterval)
+        this.play("geniedeath0", true)
+        this.once("animationcomplete", ()=> this.destroy())
     }
 
     attack() {
-        let x = 1920*Math.round(Math.random())
-        let y = 25+(1030*Math.random())
-        let notes = this.scene.add.sprite(x == 0 ? x+100 : x-100, y, "notes").play("notes0")
-        setTimeout(()=>{
-            let snake = new Snake({scene:this.scene, x:(x == 0 ? x+70 : x-70), y:y, key: "snake", name:"snake"})
-            snake.create()
-            snake.movement()
-            notes.destroy()
-        }, 1000)        
-    }
+        this.play("genie4")
+        for (let i = 0; i < 4; i++) {
+            let w = this.scene.physics.add.sprite(this.x, this.y, "whirlwind").play("whirlwind0").setScale(1.5)
+            w.setSize(50, 100)
+            w.debugShowBody = false
+            w.debugShowVelocity = false
+            w.collider = this.scene.physics.add.overlap(w, this.scene.player, (c, t) => {
+                if (!this.scene.player.immune) {
+                    this.scene.player.takeDamage(c, t)
+                    this.scene.bloodEffect(t)
+                }
+            }, null, this.scene)
+            w.setCollideWorldBounds(true)
+            w.body.onWorldBounds = true
+            w.onBounds = function () {
+                this.collider.destroy()
+                this.destroy()
+            }
+            if (this.attackDir)
+                w.setVelocity(i % 2 == 0 ? i == 0 ? this.speed : -this.speed : 0, i % 2 == 1 ? i == 1 ? this.speed : -this.speed : 0)
+            else
+                w.setVelocity(i % 2 == 0 ? (this.speed * 1.4) / 2 : -(this.speed * 1.4) / 2, i < 2 ? (this.speed * 1.4) / 2 : -(this.speed * 1.4) / 2)
 
+        }
+        if (this.attackDir) this.attackDir = false
+        else this.attackDir = true
+    }
+    enragedAttack() {
+
+        let w = this.scene.physics.add.sprite(this.x - (50 * Math.random()), 100 + (880 * Math.random()), "whirlwind").play("whirlwind0").setScale(2)
+        w.setSize(50, 100)
+        w.debugShowBody = false
+        w.debugShowVelocity = false
+        w.speed = this.speed
+        this.scene.physics.add.overlap(w, this.scene.player, (c, t) => {
+            if (!this.scene.player.immune) {
+                this.scene.player.takeDamage(c, t)
+                this.scene.bloodEffect(t)
+            }
+        }, null, this.scene)
+        w.setCollideWorldBounds(true)
+        w.body.onWorldBounds = true
+        w.onBounds = function () {
+            if (this.attackDir) this.setVelocity(-(this.speed * 1.4) / 2, (this.speed * 1.4) / 2), w.attackDir = false
+            else w.setVelocity(-(this.speed * 1.4) / 2, -(this.speed * 1.4) / 2), w.attackDir = true
+            if (this.x < 75) this.destroy()
+        }
+        if (this.attackDir)
+            w.setVelocity(-(this.speed * 1.4) / 2, -(this.speed * 1.4) / 2),
+            w.attackDir = true
+        else
+            w.setVelocity(-(this.speed * 1.4) / 2, (this.speed * 1.4) / 2),
+            w.attackDir = false
+
+        if (this.attackDir) this.attackDir = false
+        else this.attackDir = true
+
+    }
     takeDamage(cause) {
-        
+
         this.health -= cause.damage
         if (this.health == 50) {
             this.duplicate()
-        }
-        else {
+        } else {
             this.setTintFill(0xffffff)
-            setTimeout(()=> {
+            setTimeout(() => {
                 this.clearTint()
             }, 200)
         }
         cause.spentOn.push(this.name)
-        if (this.health <= 0 ) {
-            if(this.drop) this.scene.drop(this.x,this.y, this.drop)
+        if (this.health <= 0) {
+            if (this.drop) this.scene.drop(this.x, this.y, this.drop)
             this.destroy()
         }
         setTimeout(() => {
-            cause.spentOn = cause.spentOn.filter( (element) => {
+            cause.spentOn = cause.spentOn.filter((element) => {
                 element !== this.name
             })
         }, cause.swingTimer)
     }
 
-    duplicate() {
-        let o =  new SnakeCharmer({scene:this.scene, x:1920/2, y:1080/2, key:"snakecharmer", name:"snakecharmer2"})
-        o.health = 50
-        o.create()
-        o.freeze = false
-        o.idle = false
-        o.setTint(0xff00ff)
-        
-        this.scene.enemies.push(o)
-        this.scene.add.sprite(1920/2, 1080/2, "smoke").play("smoke0")
 
-        this.x = 1920/2
-        this.y = 1080/2
-
-        this.idle = false
-        clearTimeout(this.idleTimer)
-        this.setTint(0xff00ff)
-
-        setTimeout(()=>{
-            this.idle = true
-            o.idle = true
-            this.clearTint()
-            o.clearTint()
-        },1000)
-    }
 }
