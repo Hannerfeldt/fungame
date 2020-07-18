@@ -15,11 +15,13 @@ export class Lamp extends Phaser.Physics.Arcade.Image {
         this.setCollideWorldBounds(true)
         this.body.onWorldBounds = true
         this.freeze = false
+
         this.scene.physics.add.collider(this, this.scene.player, (c, t) => {
-            if (c.body.touching.right) c.body.setVelocityX(200)
-            if (c.body.touching.left) c.body.setVelocityX(-200)
-            if (c.body.touching.down) c.body.setVelocityY(200)
-            if (c.body.touching.up) c.body.setVelocityY(-200)
+            if (t.trues.length == 0) c.body.setVelocity(0, 0)
+            else if (c.body.touching.right) c.body.setVelocityX(200)
+            else if (c.body.touching.left) c.body.setVelocityX(-200)
+            else if (c.body.touching.down) c.body.setVelocityY(200)
+            else if (c.body.touching.up) c.body.setVelocityY(-200)
         }, null, this.scene)
 
         this.scene.enemies.push(this)

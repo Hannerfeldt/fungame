@@ -285,7 +285,7 @@ export class GameScene extends Phaser.Scene {
         })
         this.animArray.push({
             skin: 'genie',
-            key: [9, 10, 11, 12],
+            key: [8, 9, 10, 11],
             repeat: -1,
             rate: 6
         })
@@ -397,10 +397,7 @@ export class GameScene extends Phaser.Scene {
             this.attack.once("animationcomplete", () => {
                 this.attack.destroy(), overlapObject.destroy()
             })
-            console.log(this.physics.world.colliders._active)
         }
-
-
     }
 
     animationsCreate(skin, key, repeat, rate) {
@@ -449,8 +446,9 @@ export class GameScene extends Phaser.Scene {
         let blood = this.physics.add.sprite(target.x, target.y, "blood", 0).setOrigin(0.5, 0.5)
         blood.play('blood0')
         blood.debugShowBody = false
-        if (target.constructor.name == "Lamp") blood.setTintFill(0xffff66)
 
+        if (target.constructor.name == "Lamp") blood.setTintFill(0xffff66)
+        if (target.constructor.name == "Genie") blood.alpha = 0
         setTimeout(() => {
             blood.destroy()
         }, 200)

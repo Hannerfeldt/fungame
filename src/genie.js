@@ -6,7 +6,7 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
     constructor(config) {
         super(config.scene, config.x, config.y, config.key)
         this.name = config.name
-        this.health = 150
+
         this.stunned = false
         this.canAttack = true
         this.swingTimer = 1000
@@ -18,7 +18,7 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
         this.random = Math.round(Math.random() * 10)
         this.drop = this.random == 8 ? "speed" : this.random == 9 ? "health" : this.random == 10 ? "xp" : ""
         this.idleTimer
-        this.scene.physics.add.overlap(this, this.scene.player, (c, t) => {
+        this.overlap = this.scene.physics.add.overlap(this, this.scene.player, (c, t) => {
             if (!this.scene.player.immune) {
                 this.scene.player.takeDamage(c, t)
                 this.scene.bloodEffect(t)
@@ -67,7 +67,7 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
                     s.play("smoke0")
                     s.setScale(3)
                     s.setTint(0x5500bb)
-                    s.once("animationcomplete", ()=>s.destroy())
+                    s.once("animationcomplete", () => s.destroy())
                     c.destroy()
                 }, 1000)
 
@@ -85,10 +85,10 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
             if (this.o) {
                 clearTimeout(this.idleTimer)
                 clearInterval(this.attackInterval)
-                this.play("genie9", true)
+                this.play("genie8", true)
                 this.attackInterval = setInterval(() => {
                     this.enragedAttack()
-                }, 1500)
+                }, 1000)
                 this.o = false
             }
         }
@@ -96,8 +96,9 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
 
     die() {
         clearInterval(this.attackInterval)
+        this.overlap.destroy()
         this.play("geniedeath0", true)
-        this.once("animationcomplete", ()=> this.destroy())
+        this.once("animationcomplete", () => this.destroy())
     }
 
     attack() {
@@ -161,26 +162,17 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
     }
     takeDamage(cause) {
 
-        this.health -= cause.damage
-        if (this.health == 50) {
-            this.duplicate()
-        } else {
-            this.setTintFill(0xffffff)
-            setTimeout(() => {
-                this.clearTint()
-            }, 200)
-        }
+        this.alpha = 0.2
+        setTimeout(() => {
+            this.alpha = 1
+        }, 200)
+
         cause.spentOn.push(this.name)
-        if (this.health <= 0) {
-            if (this.drop) this.scene.drop(this.x, this.y, this.drop)
-            this.destroy()
-        }
+
         setTimeout(() => {
             cause.spentOn = cause.spentOn.filter((element) => {
                 element !== this.name
             })
         }, cause.swingTimer)
     }
-
-
 }

@@ -8,7 +8,7 @@ export class AttackBox extends Phaser.Physics.Arcade.Sprite {
         this.play('swing0')
         this.rotation = config.r
         this.spentOn = []
-        this.debugShowBody = true
+        this.debugShowBody = false
         this.damage = 10
         this.swingTimer = 800
     }
