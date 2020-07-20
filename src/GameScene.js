@@ -45,6 +45,7 @@ import genie from './assets/genie.png'
 import lazer from './assets/lazer.png'
 import whirlwind from './assets/whirlwind.png'
 import geniedeath from './assets/geniedeath.png'
+import circle from './assets/circle.png'
 
 
 import bg from './assets/grass_background.png'
@@ -55,9 +56,9 @@ import health from './assets/health_icon.png'
 import xp from './assets/xp_icon.png'
 import speed from './assets/speed_icon.png'
 import lamp from './assets/lamp.png'
-import circle from './assets/circle.png'
 
 import level1 from './assets/level1.mp3'
+import level2 from './assets/level2.mp3'
 
 export class GameScene extends Phaser.Scene {
     constructor() {
@@ -145,6 +146,10 @@ export class GameScene extends Phaser.Scene {
             frameWidth: 200,
             frameHeight: 200
         })
+        this.load.spritesheet("circle", circle, {
+            frameWidth: 200,
+            frameHeight: 200
+        })
 
         this.load.image('web', web)
         this.load.image('blackheart', blackheart)
@@ -155,9 +160,10 @@ export class GameScene extends Phaser.Scene {
         this.load.image("speed", speed)
         this.load.image("heart", heart)
         this.load.image("lamp", lamp)
-        this.load.image("circle", circle)
+        
 
         this.load.audio("level1", level1)
+        this.load.audio("level2", level2)
 
         this.animArray = []
         this.enemies = []
@@ -307,6 +313,13 @@ export class GameScene extends Phaser.Scene {
             repeat: 0,
             rate: 6
         })
+        this.animArray.push({
+            skin: 'circle',
+            key: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+            repeat: 0,
+            rate: 12
+        })
+        
 
         this.add.image(1920 / 2, 1080 / 2, "dbg")
 
@@ -317,16 +330,7 @@ export class GameScene extends Phaser.Scene {
         this.player = new Player(this)
 
         this.waves = [
-
-            [
-                new Genie({
-                    scene: this,
-                    x: 500,
-                    y: 900,
-                    key: "genie",
-                    name: "genie1"
-                })
-            ],
+            
             [
                 new SnakeCharmer({
                     scene: this,
@@ -334,6 +338,15 @@ export class GameScene extends Phaser.Scene {
                     y: 900,
                     key: "snakecharmer",
                     name: "snakecharmer1"
+                })
+            ],
+            [
+                new Genie({
+                    scene: this,
+                    x: 500,
+                    y: 900,
+                    key: "genie",
+                    name: "genie1"
                 })
             ]
         ]
@@ -350,9 +363,9 @@ export class GameScene extends Phaser.Scene {
             body.gameObject.onBounds()
         }, this);
 
-        this.music = this.sound.add("level1")
+        this.music = [this.sound.add("level2"),this.sound.add("level1")]
 
-        this.music.play()
+        this.music[0].play()
 
 
     }
@@ -361,9 +374,11 @@ export class GameScene extends Phaser.Scene {
         if (this.enemies.length == 0 && this.loadNextWave) {
             this.loadNextWave = false
             this.waves.shift()
-
+            this.music[0].pause()
+            this.music.shift()
             if (this.waves.length != 0) {
                 setTimeout(() => {
+                    this.music[0].play()
                     this.enemyCreate(this.waves[0])
                     this.loadNextWave = true
                 }, 5000)

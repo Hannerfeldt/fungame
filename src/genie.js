@@ -59,7 +59,9 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
                 this.idle = false
                 let xpos = this.scene.player.x
                 let ypos = this.scene.player.y
-                let c = this.scene.add.image(xpos, ypos, "circle")
+                let c = this.scene.add.sprite(xpos, ypos, "circle")
+                c.play('circle0')
+                c.once("animationcomplete", ()=> c.destroy())
                 setTimeout(() => {
                     this.x = xpos
                     this.y = ypos
@@ -68,7 +70,6 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
                     s.setScale(3)
                     s.setTint(0x5500bb)
                     s.once("animationcomplete", () => s.destroy())
-                    c.destroy()
                 }, 1000)
 
                 this.attackInterval = setInterval(() => {
