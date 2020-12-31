@@ -363,7 +363,7 @@ export class GameScene extends Phaser.Scene {
             body.gameObject.onBounds()
         }, this);
 
-        this.music = [this.sound.add("level2"),this.sound.add("level1")]
+        this.music = [this.sound.add("level2", {volume: 0.5}),this.sound.add("level1", {volume: 0.5})]
 
         this.music[0].play()
 
