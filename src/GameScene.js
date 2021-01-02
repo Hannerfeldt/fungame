@@ -1,31 +1,11 @@
-import {
-    AttackBox
-} from './attackbox'
-import {
-    Player
-} from './player'
-import {
-    Snake
-} from './snake'
-import {
-    Wasp
-} from './wasp'
-import {
-    Drop
-} from './drop'
-import {
-    Spider
-} from './spider'
-import {
-    Projectile
-} from './projectile'
-import {
-    SnakeCharmer
-} from './snakecharmer'
-import {
-    Genie
-} from './genie'
+// Importing classes 
+import { AttackBox } from './attackbox'
+import { Player } from './player'
+import { Drop } from './drop'
+import { SnakeCharmer } from './snakecharmer'
+import { Genie } from './genie'
 
+// Importing spritesheets
 import swing from './assets/swing.png'
 import snakecharmer from './assets/snake_charmer.png'
 import blood from './assets/bloodeffect.png'
@@ -46,8 +26,10 @@ import lazer from './assets/lazer.png'
 import whirlwind from './assets/whirlwind.png'
 import geniedeath from './assets/geniedeath.png'
 import circle from './assets/circle.png'
+import coin from './assets/coin.png'
+import nomad from './assets/nomad.png'
 
-
+// Importing images
 import bg from './assets/grass_background.png'
 import dbg from './assets/desert_background.png'
 import heart from './assets/heart.png'
@@ -56,118 +38,81 @@ import health from './assets/health_icon.png'
 import xp from './assets/xp_icon.png'
 import speed from './assets/speed_icon.png'
 import lamp from './assets/lamp.png'
+import arrow from './assets/arrow.png'
 
+// Importing audio
 import level1 from './assets/level1.mp3'
 import level2 from './assets/level2.mp3'
+import { Nomad } from './nomad'
 
 export class GameScene extends Phaser.Scene {
     constructor() {
-        super({
-            key: "GameScene"
-        })
+        super({ key: "GameScene" })
         this.player
         this.inputArray = [false, false, false, false]
         this.loots = []
-        this.loadNextWave = true
+        this.loadNextWave = false
+        this.spritesheetArray = [
+            {name:'swing',source:swing}, 
+            {name:'blood',source:blood}, 
+            {name:'spider',source:spider}, 
+            {name:'attack',source:attack}, 
+            {name:'player',source:player}, 
+            {name:'snake',source:snake}, 
+            {name:'wasp',source:wasp}, 
+            {name:'waspstunned',source:waspstunned}, 
+            {name:'gust',source:gust}, 
+            {name:'webprojectile',source:webprojectile}, 
+            {name:'stunned',source:stunned}, 
+            {name:'snakecharmer',source:snakecharmer}, 
+            {name:'notes',source:notes}, 
+            {name:'smoke',source:smoke}, 
+            {name:'genie',source:genie}, 
+            {name:'lazer',source:lazer}, 
+            {name:'geniedeath',source:geniedeath}, 
+            {name:'whirlwind',source:whirlwind}, 
+            {name:'circle',source:circle}, 
+            {name:'coin',source:coin}, 
+            {name:'nomad',source:nomad} 
+        ]
+        this.imageArray = [
+            {name:'web',source:web},
+            {name:'blackheart',source:blackheart},
+            {name:'bg',source:bg},
+            {name:'dbg',source:dbg},
+            {name:'health',source:health},
+            {name:'xp',source:xp},
+            {name:'speed',source:speed},
+            {name:'heart',source:heart},
+            {name:'lamp',source:lamp},
+            {name:'arrow',source:arrow},
+        ]
+    }
+
+    init(data) {
+        this.data.values = data
     }
 
     preload() {
         this.keyboard = this.input.keyboard.addKeys("W, A, S, D, SPACE, SHIFT")
 
-        this.load.spritesheet('swing', swing, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet('blood', blood, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet('spider', spider, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet('player', player, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet('attack', attack, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet('snake', snake, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet('wasp', wasp, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet('waspstunned', waspstunned, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet('gust', gust, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet('webprojectile', webprojectile, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet('stunned', stunned, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet('snakecharmer', snakecharmer, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet("notes", notes, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet("smoke", smoke, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet("genie", genie, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet("lazer", lazer, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet("whirlwind", whirlwind, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet("geniedeath", geniedeath, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-        this.load.spritesheet("circle", circle, {
-            frameWidth: 200,
-            frameHeight: 200
-        })
-
-        this.load.image('web', web)
-        this.load.image('blackheart', blackheart)
-        this.load.image("bg", bg)
-        this.load.image("dbg", dbg)
-        this.load.image("health", health)
-        this.load.image("xp", xp)
-        this.load.image("speed", speed)
-        this.load.image("heart", heart)
-        this.load.image("lamp", lamp)
+        // load all the spritesheets 
+        this.spritesheetArray.forEach(e=>{
+            this.load.spritesheet(e.name, e.source, {
+                frameWidth: 200,
+                frameHeight: 200
+            })
+        })  
         
-
+        // load all the images 
+        this.imageArray.forEach(e=>this.load.image(e.name,e.source))
+        
+        // load all the audio 
         this.load.audio("level1", level1)
         this.load.audio("level2", level2)
 
         this.animArray = []
         this.enemies = []
-
     }
 
     create() {
@@ -319,40 +264,57 @@ export class GameScene extends Phaser.Scene {
             repeat: 0,
             rate: 12
         })
+        this.animArray.push({
+            skin: 'coin',
+            key: [0,1,2,3,4,5,6,7],
+            repeat: -1,
+            rate: 12
+        })
+        this.animArray.push({
+            skin: 'nomad',
+            key: [0,1,2,3],
+            repeat: -1,
+            rate: 12
+        })
+        this.animArray.push({
+            skin: 'nomad',
+            key: [4,5,6,7],
+            repeat: -1,
+            rate: 12
+        })
         
-
         this.add.image(1920 / 2, 1080 / 2, "dbg")
 
-        this.animArray.forEach((e) => {
-            this.animationsCreate(e.skin, e.key, e.repeat, e.rate)
-        })
+        this.animArray.forEach(e => this.animationsCreate(e.skin, e.key, e.repeat, e.rate))
 
         this.player = new Player(this)
 
-        this.waves = [
-            
-            [
-                new SnakeCharmer({
-                    scene: this,
-                    x: 500,
-                    y: 900,
-                    key: "snakecharmer",
-                    name: "snakecharmer1"
-                })
-            ],
-            [
-                new Genie({
-                    scene: this,
-                    x: 500,
-                    y: 900,
-                    key: "genie",
-                    name: "genie1"
-                })
-            ]
+        this.levels = [
+            new Nomad({
+                scene: this,
+                x: this.game.config.width/2,
+                y: this.game.config.height/2,
+                key: "nomad",
+                name: "nomad1"
+            }),
+            new SnakeCharmer({
+                scene: this,
+                x: this.game.config.width/2,
+                y: this.game.config.height/2,
+                key: "snakecharmer",
+                name: "snakecharmer1"
+            }),
+            new Genie({
+                scene: this,
+                x: this.game.config.width/2,
+                y: this.game.config.height/2,
+                key: "genie",
+                name: "genie1"
+            })
         ]
 
-        this.enemyCreate(this.waves[0])
-        this.healthbarCreate()
+        this.enemyCreate(this.levels[0])
+        this.player.healthbarCreate()
 
         this.player.setCollideWorldBounds(true);
         this.player.body.onWorldBounds = true;
@@ -363,31 +325,33 @@ export class GameScene extends Phaser.Scene {
             body.gameObject.onBounds()
         }, this);
 
-        this.music = [this.sound.add("level2", {volume: 0.5}),this.sound.add("level1", {volume: 0.5})]
+        this.music = [this.sound.add("level2", {volume: 0.1}),this.sound.add("level1", {volume: 0.1})]
 
         this.music[0].play()
-
-
     }
-
+   
     update() {
-        if (this.enemies.length == 0 && this.loadNextWave) {
+        // load next wave?
+        if (this.loadNextWave) {
             this.loadNextWave = false
-            this.waves.shift()
+            this.levels.shift()
             this.music[0].pause()
             this.music.shift()
-            if (this.waves.length != 0) {
+            this.player.restoreFullHealth()
+            if (this.levels.length != 0) {
+                // loading next boss fight
                 setTimeout(() => {
                     this.music[0].play()
-                    this.enemyCreate(this.waves[0])
-                    this.loadNextWave = true
+                    this.enemyCreate(this.levels[0])
                 }, 5000)
             }
         }
+
         this.enemies.forEach((e, i, a) => {
             if (e.freeze) return
             e.active ? e.movement() : a.splice(i, 1)
         })
+
         this.checksInput()
     }
 
@@ -426,35 +390,23 @@ export class GameScene extends Phaser.Scene {
         })
     }
 
-    healthbarCreate() {
-        this.hearts = []
-        for (let i = 0; i < this.player.health; i++) {
-            this.add.image(50 + (75 * i), 1080 - 50, "blackheart").setScale(0.5, 0.5)
-            this.hearts.push(this.add.image(50 + (75 * i), 1080 - 50, "heart").setScale(0.5, 0.5))
+    enemyCreate(enemy) {    
+        if(Array.isArray(enemy)){
+            enemy.forEach(e => {
+                e.create()
+                setTimeout(() => {
+                    e.freeze = false
+                }, 4000)
+                this.enemies.push(e)
+            });
         }
-    }
-
-    removeHeart() {
-        this.hearts[this.hearts.length - 1].destroy()
-        this.hearts.pop()
-    }
-
-    addHeart() {
-        this.hearts.push(this.add.image(50 + (75 * this.hearts.length), 1080 - 50, "heart").setScale(0.5, 0.5))
-    }
-
-
-
-    enemyCreate(w) {
-
-        w.forEach(e => {
-            e.create()
+        else {
+            enemy.create()
             setTimeout(() => {
-                e.freeze = false
+                enemy.freeze = false
             }, 4000)
-            this.enemies.push(e)
-        });
-
+            this.enemies.push(enemy)
+        }
     }
 
     bloodEffect(target) {
@@ -524,7 +476,6 @@ export class GameScene extends Phaser.Scene {
     }
 
     drop(x, y, key) {
-
         let loot = new Drop({
             scene: this,
             x: x,
@@ -537,6 +488,5 @@ export class GameScene extends Phaser.Scene {
         this.physics.add.overlap(this.player, loot, () => {
             loot.effect()
         }, null, this)
-
     }
 }

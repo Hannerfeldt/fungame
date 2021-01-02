@@ -1,7 +1,8 @@
 import Phaser from "phaser";
-import {
-  GameScene
-} from "./GameScene";
+import { GameStartScene } from "./GameStartScene";
+import { GameScene } from "./GameScene";
+import { GameOverScene } from "./GameOverScene";
+
 
 let config = {
   type: Phaser.Auto,
@@ -12,12 +13,21 @@ let config = {
   backgroundColor: 0x000000,
   physics: {
     default: 'arcade',
-    arcade: {
-      debug: true
-    }
+    arcade: { debug: true }
   },
-  scene: [GameScene]
+  scene: [GameStartScene, GameScene, GameOverScene]
 }
 
+function loadFont(name, url) {
+  var newFont = new FontFace(name, `url(${url})`);
+  newFont.load().then(function (loaded) {
+      document.fonts.add(loaded);
+      let game = new Phaser.Game(config);
+  }).catch(function (error) {
+      return error;
+  });
+}
 
-let game = new Phaser.Game(config);
+loadFont('pixel','/src/font/Pixellari.ttf')
+
+

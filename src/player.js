@@ -20,14 +20,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.facing = this.facings.TOP
         this.maxHealth = 5
         this.health = 5
+        this.hearts = []
         this.immune = false
-        this.damage = 50
-        this.xp = 0
-        this.armour = 0
         this.debugShowBody = false
         this.debugShowVelocity = false
         this.swingTimer = 800
-        this.name = "Jonathan"
+        this.name = this.scene.data.values.name
         this.dashIsReady = true
         this.attackConfig = {
             scene: scene,
@@ -42,6 +40,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.setSize(75, 160)
         this.setImmovable = true
         this.trues = []
+        this.scene.add.text(20, 965, this.name, {fontFamily:'pixel', fontSize:'50px'}).setOrigin(0,0.5)
     }
 
     movement(inputs) {
@@ -125,17 +124,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     dash() {
         if (this.dashIsReady) {
-            if (!this.immune) this.getImmune(100)
+            if (!this.immune) this.getImmune(150)
             this.dashIsReady = false
             this.setTint(0x000000)
             this.alpha = 0.2
-            this.speed = this.speed * 10
+            this.speed = this.speed * 8
             this.scene.gustEffect(this)
             setTimeout(() => {
                 this.clearTint()
                 this.alpha = 1
                 this.speed = 300
-            }, 100)
+            }, 150)
             setTimeout(() => {
                 this.dashIsReady = true
             }, 1000)
@@ -178,14 +177,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     }
 
-    takeDamage(cause, target) {
+    takeDamage() {
         if (this.immune) return
         this.getImmune(1500)
         this.setTint(0xff0000)
         setTimeout(() => {
             this.clearTint()
         }, 100)
-
         for (let i = 0; i < 5; i++) {
             setTimeout(() => {
                 this.setTintFill(0xffffff)
@@ -196,9 +194,37 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
                 this.clearTint()
             }, 200 + (200 * i))
         }
+        this.removeHeart()
+        if (this.health <= 0) this.die()
+    }
 
-        this.scene.removeHeart()
+    healthbarCreate() {
+        for (let i = 0; i < this.maxHealth; i++) {
+            this.scene.add.image(50 + (75 * i), 1080 - 50, "blackheart").setScale(0.5, 0.5)
+            this.hearts.push(this.scene.add.image(50 + (75 * i), 1080 - 50, "heart").setScale(0.5, 0.5))
+        }
+    }
+
+    restoreFullHealth() {
+        const dif = this.maxHealth-this.health
+        for (let i = 0; i < dif; i++) {
+            this.hearts.push(this.scene.add.image(50 + (75 * this.hearts.length+i), 1080 - 50, "heart").setScale(0.5, 0.5))
+        }
+        this.health = this.maxHealth
+    }
+
+    removeHeart() {
+        this.hearts[this.hearts.length - 1].destroy()
+        this.hearts.pop()
         this.health--
-        if (this.health <= 0) this.destroy()
+    }
+
+    addHeart() {
+        this.hearts.push(this.scene.add.image(50 + (75 * this.hearts.length), 1080 - 50, "heart").setScale(0.5, 0.5))
+    }
+
+    die() {
+        this.scene.scene.start('GameOverScene');
+        this.destroy()
     }
 }

@@ -1,12 +1,9 @@
-import {
-    Lamp
-} from "./lamp"
+import { Lamp } from "./lamp"
 
 export class Genie extends Phaser.Physics.Arcade.Sprite {
     constructor(config) {
         super(config.scene, config.x, config.y, config.key)
         this.name = config.name
-
         this.stunned = false
         this.canAttack = true
         this.swingTimer = 1000
@@ -15,8 +12,6 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
         this.idle = true
         this.attackDir = true
         this.enraged = false
-        this.random = Math.round(Math.random() * 10)
-        this.drop = this.random == 8 ? "speed" : this.random == 9 ? "health" : this.random == 10 ? "xp" : ""
         this.idleTimer
         this.overlap = this.scene.physics.add.overlap(this, this.scene.player, (c, t) => {
             if (!this.scene.player.immune) {
@@ -46,7 +41,6 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
             name: "lamp1"
         })
         this.lamp.create()
-
     }
 
     onBounds() {
@@ -61,7 +55,7 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
                 let ypos = this.scene.player.y
                 let c = this.scene.add.sprite(xpos, ypos, "circle")
                 c.play('circle0')
-                c.once("animationcomplete", ()=> c.destroy())
+                c.once("animationcomplete", () => c.destroy())
                 setTimeout(() => {
                     this.x = xpos
                     this.y = ypos
@@ -99,7 +93,8 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
         clearInterval(this.attackInterval)
         this.overlap.destroy()
         this.play("geniedeath0", true)
-        this.once("animationcomplete", () => this.destroy())
+        this.once("animationcomplete", () => {this.destroy(),this.scene.loadNextWave = true})
+        
     }
 
     attack() {
@@ -130,13 +125,13 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
         if (this.attackDir) this.attackDir = false
         else this.attackDir = true
     }
-    enragedAttack() {
 
-        let w = this.scene.physics.add.sprite(this.x - (50 * Math.random()), 100 + (880 * Math.random()), "whirlwind").play("whirlwind0").setScale(2)
-        w.setSize(50, 100)
+    enragedAttack() {
+        let w = this.scene.physics.add.sprite(this.x - (50 * Math.random()), 100 + (880 * Math.random()), "whirlwind").play("whirlwind0").setScale(1.5).setTint(0xbb0000)
+        w.setSize(50, 75)
         w.debugShowBody = false
         w.debugShowVelocity = false
-        w.speed = this.speed
+        w.speed = this.speed * .75
         this.scene.physics.add.overlap(w, this.scene.player, (c, t) => {
             if (!this.scene.player.immune) {
                 this.scene.player.takeDamage(c, t)
@@ -146,16 +141,18 @@ export class Genie extends Phaser.Physics.Arcade.Sprite {
         w.setCollideWorldBounds(true)
         w.body.onWorldBounds = true
         w.onBounds = function () {
-            if (this.attackDir) this.setVelocity(-(this.speed * 1.4) / 2, (this.speed * 1.4) / 2), w.attackDir = false
-            else w.setVelocity(-(this.speed * 1.4) / 2, -(this.speed * 1.4) / 2), w.attackDir = true
+            if (this.attackDir) this.setVelocity(-(w.speed * 1.4) / 2, (w.speed * 1.4) / 2), w.attackDir = false
+            else w.setVelocity(-(w.speed * 1.4) / 2, -(w.speed * 1.4) / 2), w.attackDir = true
             if (this.x < 75) this.destroy()
         }
-        if (this.attackDir)
-            w.setVelocity(-(this.speed * 1.4) / 2, -(this.speed * 1.4) / 2),
+        if (this.attackDir) {
+            w.setVelocity(-(w.speed * 1.4) / 2, -(w.speed * 1.4) / 2)
             w.attackDir = true
-        else
-            w.setVelocity(-(this.speed * 1.4) / 2, (this.speed * 1.4) / 2),
+        }
+        else {
+            w.setVelocity(-(w.speed * 1.4) / 2, (w.speed * 1.4) / 2)
             w.attackDir = false
+        }
 
         if (this.attackDir) this.attackDir = false
         else this.attackDir = true

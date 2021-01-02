@@ -12,7 +12,19 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
         this.play('webprojectile0')
         this.scene.physics.add.overlap(this, this.scene.player, this.onImpact, () => this.destroy(), this.scene)
     }
+   
+    movement() {
+        //this.setVelocity(this.scene.player.x, this.scene.player.y)
 
+        this.xDir = (this.scene.player.x - this.x)/(this.scene.player.y - this.y)
+        this.xDir = Math.atan(this.xDir) * (180/Math.PI)
+        this.xDir = Math.abs(this.xDir/90)
+        this.yDir = 1 - this.xDir; 
+        if(this.scene.player.x - this.x < 0) this.xDir = -Math.abs(this.xDir)
+        if(this.scene.player.y - this.y < 0) this.yDir = -Math.abs(this.yDir)
+        this.setVelocityX(300*this.xDir)
+        this.setVelocityY(300*this.yDir)
+    }
     onImpact(c, t) {
         if (t.stunned) return
         if (t.diminishingReturns) return
